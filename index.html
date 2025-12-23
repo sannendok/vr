@@ -234,141 +234,47 @@
     <!-- Подключаем RPlayer -->
     <script src="https://cdn.jsdelivr.net/npm/rplayer@latest/dist/rplayer.min.js"></script>
     <script>
-        // Каталог космических VR-видео
-        const playlist = [
-            {
-                id: 1,
-                title: "Прогулка по Марсу в 360°",
-                description: "Виртуальная экскурсия по поверхности Марса от NASA. Панорамный вид на Красную планету.",
-                url: "https://www.youtube.com/watch?v=ZEyAs3NWH4A",
-                thumbnail: "https://img.youtube.com/vi/ZEyAs3NWH4A/maxresdefault.jpg",
-                duration: "5:32",
-                source: "NASA"
-            },
-            {
-                id: 2,
-                title: "Экскурсия по МКС",
-                description: "Полная 360° экскурсия по Международной космической станции. Почувствуйте себя космонавтом.",
-                url: "https://www.youtube.com/watch?v=oVMeGqCbK1A",
-                thumbnail: "https://img.youtube.com/vi/oVMeGqCbK1A/maxresdefault.jpg",
-                duration: "8:15",
-                source: "NASA 360°"
-            },
-            {
-                id: 3,
-                title: "Запуск ракеты Falcon 9",
-                description: "Запуск ракеты SpaceX с мыса Канаверал в формате 360°. Погрузитесь в центр событий.",
-                url: "https://www.youtube.com/watch?v=aY-0uBIYYKk",
-                thumbnail: "https://img.youtube.com/vi/aY-0uBIYYKk/maxresdefault.jpg",
-                duration: "3:47",
-                source: "SpaceX"
-            },
-            {
-                id: 4,
-                title: "Полет к Юпитеру: миссия Juno",
-                description: "Путешествие к Юпитеру с космическим аппаратом Juno. Захватывающие виды газового гиганта.",
-                url: "https://www.youtube.com/watch?v=wqec8MF8Q-A",
-                thumbnail: "https://img.youtube.com/vi/wqec8MF8Q-A/maxresdefault.jpg",
-                duration: "4:22",
-                source: "NASA"
-            },
-            {
-                id: 5,
-                title: "Телескоп Хаббл: 25 лет в космосе",
-                description: "Панорамный обзор самых знаменитых снимков космического телескопа Хаббл в 360°.",
-                url: "https://www.youtube.com/watch?v=tM8652Font8",
-                thumbnail: "https://img.youtube.com/vi/tM8652Font8/maxresdefault.jpg",
-                duration: "6:45",
-                source: "NASA/ESA"
-            },
-            {
-                id: 6,
-                title: "Северное сияние с борта МКС",
-                description: "Завораживающие виды полярного сияния, снятые астронавтами с Международной космической станции.",
-                url: "https://www.youtube.com/watch?v=8wq4xWtIguQ",
-                thumbnail: "https://img.youtube.com/vi/8wq4xWtIguQ/maxresdefault.jpg",
-                duration: "3:18",
-                source: "NASA"
-            }
-        ];
-        
-        // Инициализация плеера
+    // 1. Проверка: создадим простой плеер без сложных настроек
+    try {
         const player = new RPlayer({
             container: '#player-container',
-            autoPlay: false,
-            controls: {
-                play: true,
-                volume: true,
-                playbackRate: true,
-                currentTime: true,
-                progress: true,
-                duration: true,
-                fullscreen: true,
-                subtitle: false,
-                setting: false,
-                pip: false
-            },
-            settings: ['loop'],
-            theme: {
-                primaryColor: '#4361ee'
-            }
+            src: 'https://www.youtube.com/watch?v=ZEyAs3NWH4A'
         });
+        console.log('Плеер создан успешно');
+    } catch (error) {
+        console.error('Ошибка создания плеера:', error);
+    }
+    
+    // 2. Простой вывод списка видео (без красивых карточек)
+    const playlist = [
+        { title: "Прогулка по Марсу", url: "https://www.youtube.com/watch?v=ZEyAs3NWH4A" },
+        { title: "Экскурсия по МКС", url: "https://www.youtube.com/watch?v=oVMeGqCbK1A" },
+        { title: "Запуск Falcon 9", url: "https://www.youtube.com/watch?v=aY-0uBIYYKk" },
+        { title: "Полет к Юпитеру", url: "https://www.youtube.com/watch?v=wqec8MF8Q-A" },
+        { title: "Телескоп Хаббл", url: "https://www.youtube.com/watch?v=tM8652Font8" },
+        { title: "Северное сияние", url: "https://www.youtube.com/watch?v=8wq4xWtIguQ" }
+    ];
+    
+    const videoGrid = document.getElementById('video-grid');
+    
+    playlist.forEach(video => {
+        const div = document.createElement('div');
+        div.innerHTML = `<h3>${video.title}</h3>`;
+        div.style.padding = '10px';
+        div.style.border = '1px solid white';
+        div.style.margin = '5px';
+        div.style.cursor = 'pointer';
         
-        // Функция для отображения списка видео
-        function renderVideoList() {
-            const videoGrid = document.getElementById('video-grid');
-            
-            playlist.forEach(video => {
-                const card = document.createElement('div');
-                card.className = 'video-card';
-                card.setAttribute('data-id', video.id);
-                
-                card.innerHTML = `
-                    <div class="video-thumbnail" style="background-image: url('${video.thumbnail}')">
-                        <div class="play-overlay">▶</div>
-                    </div>
-                    <div class="video-info">
-                        <div class="video-title">${video.title}</div>
-                        <div class="video-desc">${video.description}</div>
-                        <div class="duration">${video.duration} • ${video.source}</div>
-                    </div>
-                `;
-                
-                // Добавляем обработчик клика
-                card.addEventListener('click', () => {
-                    playVideo(video.url);
-                    // Прокрутка к плееру
-                    document.querySelector('.player-section').scrollIntoView({ 
-                        behavior: 'smooth' 
-                    });
-                });
-                
-                videoGrid.appendChild(card);
-            });
-        }
+        div.onclick = function() {
+            alert('Будет воспроизведено: ' + video.title);
+            // Здесь позже добавим воспроизведение
+        };
         
-        // Функция для воспроизведения видео
-        function playVideo(url) {
-            player.src = url;
-            player.play();
-            
-            // Обновляем заголовок страницы
-            const videoTitle = playlist.find(v => v.url === url)?.title || 'Космос в VR';
-            document.title = `${videoTitle} - Космос в VR 360°`;
-        }
-        
-        // Автовоспроизведение первого видео
-        function playFirstVideo() {
-            if (playlist.length > 0) {
-                playVideo(playlist[0].url);
-            }
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', () => {
-            renderVideoList();
-            playFirstVideo();
-        });
-    </script>
+        videoGrid.appendChild(div);
+    });
+    
+    console.log('Список видео создан');
+</script>
+
 </body>
 </html>
