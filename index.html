@@ -1,56 +1,374 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Мой VR Каталог</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Космос в VR 360° - Мой каталог</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rplayer@latest/dist/rplayer.min.css">
     <style>
-        body { margin: 0; padding: 20px; background: #111; color: #fff; font-family: sans-serif; }
-        .video-item { padding: 10px; border-bottom: 1px solid #333; cursor: pointer; }
-        .video-item:hover { background: #222; }
-        #player-container { margin: 20px auto; max-width: 800px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c2e 0%, #1a1a3e 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            color: #a0a0c0;
+            font-size: 1.1rem;
+        }
+        
+        .player-section {
+            margin-bottom: 40px;
+        }
+        
+        #player-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .instructions {
+            background: rgba(67, 97, 238, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4361ee;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #4cc9f0;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.6;
+        }
+        
+        .playlist-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #f72585;
+            text-align: center;
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .video-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #4361ee;
+        }
+        
+        .video-thumbnail {
+            width: 100%;
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .video-info {
+            padding: 15px;
+        }
+        
+        .video-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        
+        .video-desc {
+            color: #a0a0c0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .duration {
+            display: inline-block;
+            background: rgba(247, 37, 133, 0.2);
+            color: #f72585;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0a0c0;
+            font-size: 0.9rem;
+        }
+        
+        .vr-notice {
+            background: rgba(76, 201, 240, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            border: 1px solid rgba(76, 201, 240, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <h2>🎬 Мой VR Каталог</h2>
-    <div id="playlist"></div>
-    <div id="player-container"></div>
-
+    <div class="container">
+        <header>
+            <h1>🚀 Космос в VR 360°</h1>
+            <p class="subtitle">Смотрите лучшие космические видео в виртуальной реальности</p>
+        </header>
+        
+        <div class="vr-notice">
+            <strong>VR-режим:</strong> Откройте эту страницу в браузере DeoVR, Skybox или другого VR-приложения, 
+            затем нажмите на видео и активируйте VR-режим (иконка очков в плеере).
+        </div>
+        
+        <section class="player-section">
+            <div id="player-container"></div>
+        </section>
+        
+        <div class="instructions">
+            <h3>📱 Как смотреть в VR на телефоне:</h3>
+            <ol>
+                <li>Установите VR-приложение (DeoVR, Skybox, AmazeVR)</li>
+                <li>Откройте в нём браузер и введите адрес этой страницы</li>
+                <li>Нажмите на любое видео в списке ниже</li>
+                <li>В плеере нажмите иконку очков для перехода в VR-режим</li>
+            </ol>
+        </div>
+        
+        <section class="playlist-section">
+            <h2>🎬 Выберите видео для просмотра:</h2>
+            
+            <div class="video-grid" id="video-grid">
+                <!-- Видео будут добавлены через JavaScript -->
+            </div>
+        </section>
+        
+        <footer>
+            <p>Каталог создан для VR-просмотра • Все видео с YouTube • Обновлено: декабрь 2024</p>
+            <p style="margin-top: 10px;">Для добавления своих видео отредактируйте файлы index.html и playlist.m3u</p>
+        </footer>
+    </div>
+    
+    <!-- Подключаем RPlayer -->
     <script src="https://cdn.jsdelivr.net/npm/rplayer@latest/dist/rplayer.min.js"></script>
     <script>
-        // Плейлист с видео (можно загрузить и из отдельного .m3u файла)
+        // Каталог космических VR-видео
         const playlist = [
-            { title: "Прогулка по Марсу", url: "https://www.youtube.com/watch?v=ZEyAs3NWH4A" },
-            { title: "Экскурсия по МКС", url: "https://www.youtube.com/watch?v=oVMeGqCbK1A" }
+            {
+                id: 1,
+                title: "Прогулка по Марсу в 360°",
+                description: "Виртуальная экскурсия по поверхности Марса от NASA. Панорамный вид на Красную планету.",
+                url: "https://www.youtube.com/watch?v=ZEyAs3NWH4A",
+                thumbnail: "https://img.youtube.com/vi/ZEyAs3NWH4A/maxresdefault.jpg",
+                duration: "5:32",
+                source: "NASA"
+            },
+            {
+                id: 2,
+                title: "Экскурсия по МКС",
+                description: "Полная 360° экскурсия по Международной космической станции. Почувствуйте себя космонавтом.",
+                url: "https://www.youtube.com/watch?v=oVMeGqCbK1A",
+                thumbnail: "https://img.youtube.com/vi/oVMeGqCbK1A/maxresdefault.jpg",
+                duration: "8:15",
+                source: "NASA 360°"
+            },
+            {
+                id: 3,
+                title: "Запуск ракеты Falcon 9",
+                description: "Запуск ракеты SpaceX с мыса Канаверал в формате 360°. Погрузитесь в центр событий.",
+                url: "https://www.youtube.com/watch?v=aY-0uBIYYKk",
+                thumbnail: "https://img.youtube.com/vi/aY-0uBIYYKk/maxresdefault.jpg",
+                duration: "3:47",
+                source: "SpaceX"
+            },
+            {
+                id: 4,
+                title: "Полет к Юпитеру: миссия Juno",
+                description: "Путешествие к Юпитеру с космическим аппаратом Juno. Захватывающие виды газового гиганта.",
+                url: "https://www.youtube.com/watch?v=wqec8MF8Q-A",
+                thumbnail: "https://img.youtube.com/vi/wqec8MF8Q-A/maxresdefault.jpg",
+                duration: "4:22",
+                source: "NASA"
+            },
+            {
+                id: 5,
+                title: "Телескоп Хаббл: 25 лет в космосе",
+                description: "Панорамный обзор самых знаменитых снимков космического телескопа Хаббл в 360°.",
+                url: "https://www.youtube.com/watch?v=tM8652Font8",
+                thumbnail: "https://img.youtube.com/vi/tM8652Font8/maxresdefault.jpg",
+                duration: "6:45",
+                source: "NASA/ESA"
+            },
+            {
+                id: 6,
+                title: "Северное сияние с борта МКС",
+                description: "Завораживающие виды полярного сияния, снятые астронавтами с Международной космической станции.",
+                url: "https://www.youtube.com/watch?v=8wq4xWtIguQ",
+                thumbnail: "https://img.youtube.com/vi/8wq4xWtIguQ/maxresdefault.jpg",
+                duration: "3:18",
+                source: "NASA"
+            }
         ];
-
-        // Отображаем список
-        const playlistEl = document.getElementById('playlist');
-        playlist.forEach(video => {
-            const div = document.createElement('div');
-            div.className = 'video-item';
-            div.textContent = video.title;
-            div.onclick = () => playVideo(video.url);
-            playlistEl.appendChild(div);
-        });
-
-        // Инициализируем плеер
+        
+        // Инициализация плеера
         const player = new RPlayer({
             container: '#player-container',
             autoPlay: false,
-            plugins: []
+            controls: {
+                play: true,
+                volume: true,
+                playbackRate: true,
+                currentTime: true,
+                progress: true,
+                duration: true,
+                fullscreen: true,
+                subtitle: false,
+                setting: false,
+                pip: false
+            },
+            settings: ['loop'],
+            theme: {
+                primaryColor: '#4361ee'
+            }
         });
-
+        
+        // Функция для отображения списка видео
+        function renderVideoList() {
+            const videoGrid = document.getElementById('video-grid');
+            
+            playlist.forEach(video => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.setAttribute('data-id', video.id);
+                
+                card.innerHTML = `
+                    <div class="video-thumbnail" style="background-image: url('${video.thumbnail}')">
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-desc">${video.description}</div>
+                        <div class="duration">${video.duration} • ${video.source}</div>
+                    </div>
+                `;
+                
+                // Добавляем обработчик клика
+                card.addEventListener('click', () => {
+                    playVideo(video.url);
+                    // Прокрутка к плееру
+                    document.querySelector('.player-section').scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                });
+                
+                videoGrid.appendChild(card);
+            });
+        }
+        
+        // Функция для воспроизведения видео
         function playVideo(url) {
             player.src = url;
             player.play();
+            
+            // Обновляем заголовок страницы
+            const videoTitle = playlist.find(v => v.url === url)?.title || 'Космос в VR';
+            document.title = `${videoTitle} - Космос в VR 360°`;
         }
-
-        // Автозапуск первого видео (опционально)
-        if (playlist.length > 0) {
-            playVideo(playlist[0].url);
+        
+        // Автовоспроизведение первого видео
+        function playFirstVideo() {
+            if (playlist.length > 0) {
+                playVideo(playlist[0].url);
+            }
         }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            renderVideoList();
+            playFirstVideo();
+        });
     </script>
 </body>
 </html>
