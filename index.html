@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Мой VR Каталог</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rplayer@latest/dist/rplayer.min.css">
+    <style>
+        body { margin: 0; padding: 20px; background: #111; color: #fff; font-family: sans-serif; }
+        .video-item { padding: 10px; border-bottom: 1px solid #333; cursor: pointer; }
+        .video-item:hover { background: #222; }
+        #player-container { margin: 20px auto; max-width: 800px; }
+    </style>
+</head>
+<body>
+    <h2>🎬 Мой VR Каталог</h2>
+    <div id="playlist"></div>
+    <div id="player-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/rplayer@latest/dist/rplayer.min.js"></script>
+    <script>
+        // Плейлист с видео (можно загрузить и из отдельного .m3u файла)
+        const playlist = [
+            { title: "Прогулка по Марсу", url: "https://www.youtube.com/watch?v=ZEyAs3NWH4A" },
+            { title: "Экскурсия по МКС", url: "https://www.youtube.com/watch?v=oVMeGqCbK1A" }
+        ];
+
+        // Отображаем список
+        const playlistEl = document.getElementById('playlist');
+        playlist.forEach(video => {
+            const div = document.createElement('div');
+            div.className = 'video-item';
+            div.textContent = video.title;
+            div.onclick = () => playVideo(video.url);
+            playlistEl.appendChild(div);
+        });
+
+        // Инициализируем плеер
+        const player = new RPlayer({
+            container: '#player-container',
+            autoPlay: false,
+            plugins: []
+        });
+
+        function playVideo(url) {
+            player.src = url;
+            player.play();
+        }
+
+        // Автозапуск первого видео (опционально)
+        if (playlist.length > 0) {
+            playVideo(playlist[0].url);
+        }
+    </script>
+</body>
+</html>
